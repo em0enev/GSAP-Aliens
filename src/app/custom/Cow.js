@@ -1,6 +1,5 @@
 import EventEmitter from "eventemitter3";
 import gsap from "gsap/gsap-core";
-import Saucer from "./Saucer";
 
 export default class Cow extends EventEmitter {
     constructor() {
@@ -15,12 +14,14 @@ export default class Cow extends EventEmitter {
     }
 
     async moveTo() {
-        await gsap.to(this._cowElement, {y: '-390px'});
+        await gsap.to(this._cowElement, {y: '-390px', duration: 2});
+        this._cowElement.id = "cowAbduction";
         await this.hide();
     }
 
     async hide() {
-        await gsap.to(this._cowElement, { opacity: 0, duration: 0})
+        await gsap.to(this._cowElement, {opacity: 0 })
+        this._cowElement.id = "cowHide";
         this.emit(Cow.events.ABDUCT_COMPLETE)
     }
 }
