@@ -24,7 +24,7 @@ export default class Saucer extends EventEmitter {
     async moveTo() {
         const tl = new Timeline();
         await this._moveIn(tl);
-        this.cow.on(Cow.events.ABDUCT_COMPLETE, async () => await this._moveOut(tl))
+        this.on(Saucer.events.BEAM_HIDE, async () => await this._moveOut(tl))
     }
 
     async toggleBeam() {
@@ -34,25 +34,31 @@ export default class Saucer extends EventEmitter {
     }
 
     async _moveIn(tl) {
-        await tl.to(this._saucerElement, { x: '-835px', duration: 0.5 })
+        await tl.to(this._saucerElement, { x: '-835px', duration: 2 })
         await tl.pause();
+        this._saucerElement.id = "flyIn";
         this.emit(Saucer.events.FLY_IN)
     }
 
     async _moveOut(tl) {
         tl.resume();
-        await tl.to(this._saucerElement, { x: '-1800px' })
+        await tl.to(this._saucerElement, { x: '-1800px', duration: 2 })
+        this._saucerElement.id = 'flyOut';
         this.emit(Saucer.events.FLY_AWAY)
     }
 
     async _toggleBeamOn(tl) {
-        await tl.to(this._beamTopElement, { x: '-835px', opacity: 0.6, duration: 0 })
-            .to(this._beamBottomElement, { x: '-835px', opacity: 0.6, duration: 0 }, '<')
+        await tl.fromTo(this._beamTopElement, { x: '-835px', opacity: 0, duration: 0 }, { opacity: 0.6, duration: 3 })
+            .fromTo(this._beamBottomElement, { x: '-835px', opacity: 0, duration: 0 }, { opacity: 0.6, duration: 3 }, '<')
+        this._beamTopElement.id = "showTopBeam";
+        this._beamBottomElement.id = "showBottomBeam";
         this.emit(Saucer.events.BEAM_SHOW)
     }
 
     async _toggleBeamOff(tl) {
         await tl.reverse();
+        this._beamTopElement.id = "hideTopBeam";
+        this._beamBottomElement.id = "hideBottomBeam";
         this.emit(Saucer.events.BEAM_HIDE)
     }
 }
