@@ -34,31 +34,32 @@ export default class Saucer extends EventEmitter {
     }
 
     async _moveIn(tl) {
-        await tl.to(this._saucerElement, { x: '-835px', duration: 2 })
+        await tl.to(this._saucerElement, { id: 'flyIn', x: '-835px', duration: 2 })
         await tl.pause();
-        this._saucerElement.id = "flyIn";
         this.emit(Saucer.events.FLY_IN)
     }
 
     async _moveOut(tl) {
         tl.resume();
-        await tl.to(this._saucerElement, { x: '-1800px', duration: 2 })
-        this._saucerElement.id = 'flyOut';
+        await tl.to(this._saucerElement, {id: 'flyOut', x: '-1800px', duration: 2 })
         this.emit(Saucer.events.FLY_AWAY)
     }
 
     async _toggleBeamOn(tl) {
-        await tl.fromTo(this._beamTopElement, { x: '-835px', opacity: 0, duration: 0 }, { opacity: 0.6, duration: 3 })
-            .fromTo(this._beamBottomElement, { x: '-835px', opacity: 0, duration: 0 }, { opacity: 0.6, duration: 3 }, '<')
-        this._beamTopElement.id = "showTopBeam";
-        this._beamBottomElement.id = "showBottomBeam";
+        const showTopBeam = gsap.fromTo(this._beamTopElement, { id: 'showTopBeam', x: '-835px', opacity: 0, duration: 0 }, { opacity: 0.6, duration: 3 });
+        const showBottomBeam = gsap.fromTo(this._beamBottomElement, { id: 'showBottomBeam', x: '-835px', opacity: 0, duration: 0 }, { opacity: 0.6, duration: 3 })
+
+        tl.add(showTopBeam);
+        tl.add(showBottomBeam, '<')
+
         this.emit(Saucer.events.BEAM_SHOW)
     }
 
     async _toggleBeamOff(tl) {
+        tl._first.vars.startAt.id = 'hideTopBeam';
+        tl._last.vars.startAt.id = 'hideBottomBeam'
         await tl.reverse();
-        this._beamTopElement.id = "hideTopBeam";
-        this._beamBottomElement.id = "hideBottomBeam";
+
         this.emit(Saucer.events.BEAM_HIDE)
     }
 }
