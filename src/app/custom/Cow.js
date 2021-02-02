@@ -14,14 +14,13 @@ export default class Cow extends EventEmitter {
     }
 
     async moveTo() {
-        await gsap.to(this._cowElement, {y: '-390px', duration: 2});
+        await gsap.to(this._cowElement, {id: 'cowAbduction',y: '-390px', duration: 2});
         this._cowElement.id = "cowAbduction";
         await this.hide();
     }
 
     async hide() {
-        await gsap.to(this._cowElement, {opacity: 0 })
-        this._cowElement.id = "cowHide";
+        await gsap.to(this._cowElement, {id:'cowHide', opacity: 0 })
         this.emit(Cow.events.ABDUCT_COMPLETE)
     }
 }
